@@ -7,6 +7,5 @@ class Controller {
   void HandleInput(bool &running, Hero &hero) const;
 
  private:
-  void ChangeDirection(Hero &hero, Hero::Direction input,
-                       Hero::Direction opposite) const;
+  void SetDirection(Hero &hero, Hero::Direction input) const;
 };

@@ -2,10 +2,13 @@
 
 #include <random>
 #include <string>
+#include <memory>
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
 #include "hero.h"
+
+class Level;
 
 class Game {
  public:
@@ -24,7 +27,9 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score{0};
-  int currentLevel{1};
+  int currentLevel{2};
+
+  std::unique_ptr<Level> _level;
 
   void CreateLevel(int level);
   void Update();

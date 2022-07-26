@@ -1,12 +1,14 @@
 #include "renderer.h"
-#include "resource_path.h"
+// TODO: check solution
+// error checks but problems with multiple definition when using make
+//#include "resource_path.h"
 
+#include "hero.h"
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <memory>
 #include <SDL.h>
-
-#define TEXTURE_SIZE 32
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -48,18 +50,9 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Hero const hero /*, SDL_Point const &food*/) {
-  SDL_Rect block;
-  block.w = screen_width / grid_width;
-  block.h = screen_height / grid_height;
-
-  // Clear screen
-  SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
-  SDL_RenderClear(sdl_renderer);
-
-  // TODO: refactor destroy in lambda/method, other loading in methods
-  // load hero image
-  std::string texturePath = getResourcePath("hero") + "avatar.bmp";
+void Renderer::RenderTexture(const std::string& texturePath, const SDL_Rect& source, const SDL_Rect& destination)
+{
+  // load image
   SDL_Surface* bmp = SDL_LoadBMP(texturePath.c_str());
   if (bmp == nullptr)
   {
@@ -82,24 +75,27 @@ void Renderer::Render(Hero const hero /*, SDL_Point const &food*/) {
     return;
   }
 
-  // draw texture
-  //First clear the renderer
-	SDL_RenderClear(sdl_renderer);
 	//Draw the texture
-  SDL_Rect Source;
-  SDL_Rect Destination;
+	SDL_RenderCopy(sdl_renderer, tex, &source, &destination);
+}
 
-  Source.x = 0;
-  Source.y = 0;
-  Source.w = TEXTURE_SIZE;
-  Source.h = TEXTURE_SIZE;
+void Renderer::Render(Hero& hero, std::unique_ptr<Level>& level) {
+  /*
+  SDL_Rect block;
+  block.w = screen_width / grid_width;
+  block.h = screen_height / grid_height;
+  */
 
-  Destination.x = screen_width/2;
-  Destination.y = screen_height/2;
-  Destination.w = TEXTURE_SIZE;
-  Destination.h = TEXTURE_SIZE;
 
-	SDL_RenderCopy(sdl_renderer, tex, &Source, &Destination);
+  // Clear screen
+  SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
+  SDL_RenderClear(sdl_renderer);
+
+  TextureData heroData = hero.getTextureData();
+
+  // render hero texture
+  RenderTexture(heroData.texturePath, heroData.Source, heroData.Destination);
+  
 	//Update the screen
 	SDL_RenderPresent(sdl_renderer);
 	

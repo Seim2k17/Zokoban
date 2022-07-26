@@ -15,6 +15,8 @@ Game Requirements
 (- basic Ui (menu start,end,options, select level))
 - enter name and use it through the game for avatar
 - some self drawn pixelart assets (first dummy assets)
+TODO:
+-> cp assets to the build folder ! / create build/assets folder ...
 - walk u,d,l,r
 - create levels from input files (ASCII based)
 - if boxes are blocked show hint that solving is impossible 
@@ -22,10 +24,11 @@ Game Requirements
 - detect collision for boxes
 - goal area
 - push boxes if possible (no wall)
-- opponent ("cpu-ai") solving the same puzzle using pathfinding (A*) running in seperate thread
-- time needed
-- boxes left
-- movecounter, pushcounter updates 
+(- use simple sounds)
+- opponent ("cpu-ai") solving the same puzzle using pathfinding (A*) running in seperate thread / steals boxes & put them in other random places? -> need to solve the puzzle before opponent steals a box / one need jail the opponent with other boxes so stealing is not possible --> then solve the puzzle
+- show time needed
+- show boxes left
+- show movecounter, pushcounter updates 
 - when level finished show results (resultscreen)
 (for time and design reason use level layouts from the original game)
 
@@ -56,12 +59,15 @@ In this project, you can build your own C++ application or extend this Snake gam
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
+4. Copy folder /res to /build: ../build: cp -r ../res .
 4. Run it: `./Zokoban`.
 
 ## Ressources
 
-1. SDL tutorials: https://www.willusher.io/sdl2 tutorials/
+1. SDL tutorials: https://www.willusher.io/pages/sdl2/
 2. https://wiki.libsdl.org/
+3. Sokoban levels: http://borgar.net/programs/sokoban/#Sokoban
+4. SDL Keys: https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html
 
 
 ## CC Attribution-ShareAlike 4.0 International
