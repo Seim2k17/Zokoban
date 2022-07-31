@@ -31,7 +31,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, hero);
+    controller.HandleInput(running, hero, _level);
     Update();
     // unique ptrs can't be copied -> we need to move the ownership -> but then dtor will be called / so we pass it by reference tro use the ressource 
     renderer.Render(hero, _level);
@@ -68,8 +68,9 @@ void Game::CreateLevel(int level) {
 
 void Game::Update() {
   
-  hero.Update();
-
+  hero.Update(_level.get()->getLevelData());
+  _level.get()->Update(hero.getCurrentHeroCellPosition(), hero.getLastHeroCellPosition());
+   
   /*
   int new_x = static_cast<int>(snake.head_x);
   int new_y = static_cast<int>(snake.head_y);

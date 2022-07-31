@@ -1,16 +1,18 @@
 #pragma once 
 
 #include <string>
+
 #include "SDL.h"
 
 #define HERO_TEXTURE_SIZE 32
 
 struct TextureData {
     
+    // TODO: check to generalize this with leveldata into renderer ?
     TextureData()
     {
         setSourceValues(0,0);
-        setDestinationValues(0,0);
+        setDestinationValues(3,4);
     }
 
     void setSourceValues(int x, int y)
@@ -21,22 +23,29 @@ struct TextureData {
         Source.h = HERO_TEXTURE_SIZE;
     }
 
-    void setDestinationValues(int col, int row)
+    void setDestinationValues(int row, int col)
     {
         // set Pixelposition of texture from the position in block
-        Destination.x = col*HERO_TEXTURE_SIZE;
-        Destination.y = row*HERO_TEXTURE_SIZE;
+        Destination.x = (col)*HERO_TEXTURE_SIZE;
+        Destination.y = (row)*HERO_TEXTURE_SIZE;
         Destination.w = HERO_TEXTURE_SIZE;
         Destination.h = HERO_TEXTURE_SIZE;
-        _currentCol = col;
-        _currentRow = row;
+        
+        lastLocation.first = currentLocation.first;
+        lastLocation.second = currentLocation.second;
+        
+        currentLocation.first = row;
+        currentLocation.second = col;
     }
 
     SDL_Rect Source;
     SDL_Rect Destination;
 
-    int _currentCol;
-    int _currentRow;
+    std::pair<int,int> currentLocation;
+    std::pair<int,int> lastLocation;
+    
+    //int _currentCol;
+    //int _currentRow;
 
     // TODO: refactor destroy in lambda/method, other loading in methods
     // TODO: find solution for utility methods and make
@@ -45,6 +54,7 @@ struct TextureData {
 
 };
 
+class Array2D;
 
 class Hero{
 
@@ -56,17 +66,21 @@ public:
           _name(name) {}
     ~Hero() {};
 
-    void Update();
+    void Update(Array2D& levelData);
     TextureData getTextureData();
-    void setPosition(int x, int y);
-    
+    void changeHeroTexturePosition(int x, int y);
+    std::pair<int,int> getCurrentHeroCellPosition();
+    std::pair<int,int> getLastHeroCellPosition();
 
 private:
+
+    int getHeroDataPosition(Array2D& levelData);
+    void convertHeroPosition(int currentPosition, int rows, int levelDataSize);
+
     std::string _name;
     
     int grid_width;
     int grid_height;
-  
 
     TextureData _textureData;
 };

@@ -23,6 +23,12 @@ Level::~Level()
     std::cout << "Level dtor: Level " << _currentLevel << std::endl;
 }
 
+Array2D& 
+Level::getLevelData()
+{
+    return _levelData;
+}
+
 void
 Level::createLevel()
 {
@@ -46,6 +52,20 @@ Level::levelCreateable()
 }
 
 void
+Level::Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition)
+{
+    //TODO: levelstuff t.b.d.
+    if(currentDirectionInput.first != 0 || currentDirectionInput.second != 0)
+    {
+        std::cout << "Hero was at: (" << lastHeroPosition.first << "," << lastHeroPosition.second << ")" << std::endl;
+        std::cout << "Hero is at: (" << newHeroPosition.first << "," << newHeroPosition.second << ")" << std::endl;
+        std::cout << "CurDirInput: (" << currentDirectionInput.first << "," << currentDirectionInput.second << ")" << std::endl;
+        setPlayerPosition(newHeroPosition,lastHeroPosition);
+    }
+    
+}
+
+void
 Level::readLevelFromFile()
 {
     // see also render.cpp
@@ -56,29 +76,65 @@ Level::readLevelFromFile()
     char symbol;
     int row=0,col=0;
 
-    _levelData = Array2D(5,7);
+    // TODO set size acc. to levelfile ! NO MAGIC NUMBERS
+    _levelData = Array2D(7,5);
   
     std::ifstream filestream(levelPath);
     if (filestream.is_open()) {
         while (std::getline(filestream, line)) {
             std::istringstream linestream(line);
             std::cout << line << std::endl;
-            col=0;
+            row=0;
             linestream >> std::noskipws; /// whitspace are not ignored, otherwise the data vector holds wrong level data
             while(linestream >> symbol)
             {
-                _levelData[row][col] = symbol;
-                ++col;
+                _levelData[col][row] = symbol;
+                ++row;
             }
-            ++row;
+            ++col;
         }
     }
     else
     {
         std::cout << "Cannot open file " << levelPath << std::endl;
     }
-    std::cout << "Done reading LevelData" << std::endl;
+    std::cout << "Done reading LevelData: ReOutput Level" << std::endl;
+    outputLevel();
+}
 
+void
+Level::outputLevel()
+{
+    int rows = _levelData._rows;
+    int cols = _levelData._blocks.size() / rows;
+    
+    //WHY +1 ???
+    for(int j=0;j<=rows+1;++j)
+    {
+        for(int i=0;i<=cols+1;++i)
+        {
+            printf("%c",_levelData[j][i]);
+        }
+        printf("%s","\n");
+    }
+}
+
+void
+Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,int>& lastPos)
+{
+    // TODO some checks if there are special areas/boxes/walls at the new position then block or st else ....
+    // think of if this is now the point to introduce a small state machine ?
+    _levelData[lastPos.first][lastPos.second] = ' ';
+    _levelData[newPos.first][newPos.second] = 'P';
+
+    outputLevel();
+
+}
+
+void
+Level::setCurrentDirectionInput(std::pair<int,int> curInput)
+{
+    currentDirectionInput = curInput;
 }
 
 int
