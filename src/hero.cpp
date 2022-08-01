@@ -50,13 +50,52 @@ Hero::setPlayerStartPosition(std::pair<int,int> &startPosition)
     _textureData.setDestinationValues(startPosition.first,startPosition.second);
 }
 
-void
-Hero::changeHeroTexturePosition(int x, int y, std::unique_ptr<Level>& level)
+bool
+Hero::boxMovable(int row, int col,std::unique_ptr<Level>& level)
 {
-    //TODOD: OMG is this creepy
-    if(level->getLevelData()[_textureData.currentLocation.first+x][_textureData.currentLocation.second+y].texture.type != TextureType::Wall)
+    TextureType type = level->getLevelData()[row][col].texture.type;
+    if(type != TextureType::Wall && type != TextureType::Box)
     {
-      _textureData.setDestinationValues(_textureData.currentLocation.first+x,_textureData.currentLocation.second+y);
+        return true;
+    }
+
+    return false;
+}
+
+bool
+Hero::playerBlocked(int row, int col, int dirRow, int dirCol, std::unique_ptr<Level>& level)
+{
+    TextureType type = level->getLevelData()[row][col].texture.type;
+
+    switch(type)
+    {
+        case TextureType::Wall:
+            return true;
+        case TextureType::Box:
+        {
+            // is box movable to the direcdtion the player pushes?
+            return !(boxMovable(row+dirRow,col+dirCol,level));
+        }
+            
+        default:
+            return false;
+    }
+}
+
+PossiblePush
+Hero::changeHeroTexturePosition(int dirRow, int dirCol, std::unique_ptr<Level>& level)
+{
+    //
+    int potentialY = _textureData.currentLocation.first+dirRow;
+    int potentialX = _textureData.currentLocation.second+dirCol;
+    PossiblePush box;
+
+    if(!playerBlocked(potentialY,potentialX,dirRow,dirCol,level))
+    {
+      _textureData.setDestinationValues(potentialY,potentialX);
+      // here it means we can make a potential push
+      box = {true,potentialY+dirRow,potentialX+dirCol};
     }
     
+    return box;
 }

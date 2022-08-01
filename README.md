@@ -15,14 +15,22 @@ Game Requirements
 (- basic Ui (menu start,end,options, select level))
 - enter name and use it through the game for avatar
 - some self drawn pixelart assets (first dummy assets)
-TODO:
--> cp assets to the build folder ! / create build/assets folder ...
+
+DONE:
+
 - walk u,d,l,r
 - create levels from input files (ASCII based)
+- goal area
+
+TODO:
+-> cp assets to the build folder ! / create build/assets folder ...
+- input name or level to load at beginning (The project accepts input from a user as part of the necessary operation of the program.)
 - if boxes are blocked show hint that solving is impossible 
 -> restart level
-- detect collision for boxes
-- goal area
+- detect collision for boxes (almost done) -> see rubric
+- All class members that are set to argument values are initialized through member initialization lists.
+
+
 - push boxes if possible (no wall)
 (- use simple sounds)
 - opponent ("cpu-ai") solving the same puzzle using pathfinding (A*) running in seperate thread / steals boxes & put them in other random places? -> need to solve the puzzle before opponent steals a box / one need jail the opponent with other boxes so stealing is not possible --> then solve the puzzle

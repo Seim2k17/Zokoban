@@ -73,7 +73,7 @@ void Renderer::RenderTexture(const std::string& texturePath, const SDL_Rect& sou
   {
     SDL_DestroyRenderer(sdl_renderer);
     SDL_DestroyWindow(sdl_window);
-    std::cout << "CreateTeture Error" << SDL_GetError() << std::endl;
+    std::cout << "CreateTexture Error" << SDL_GetError() << std::endl;
     SDL_Quit();
     return;
   }
@@ -107,14 +107,17 @@ void Renderer::Render(Hero& hero, std::unique_ptr<Level>& level) {
         break;
       case TextureType::Player:
       {
-        TextureData heroData = hero.getTextureData();
-        RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathHero), heroData.Source, heroData.Destination);
+        // see below      
         break;
       }
       default:
         break;
     }
   }
+
+  // to ensure that the player is rendered at the top of all other assets (mainly the "goal" stuff), we need to render her texture at the end
+  TextureData heroData = hero.getTextureData();
+  RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathHero), heroData.Source, heroData.Destination);
   
 	//Update the screen
 	SDL_RenderPresent(sdl_renderer);

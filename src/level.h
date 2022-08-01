@@ -10,6 +10,8 @@ using std::vector;
 struct LevelBlock{
     // symbol representing the levelblock in text
     char characterSymbol;
+    // saved symbol
+    char savedSymbol;
     // texture representiung the levelblock visually
     TextureData texture;
     // position of the levelblock in the levelgrid
@@ -48,6 +50,7 @@ class Level
         void setCurrentDirectionInput(std::pair<int,int> curInput);
 
         void Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition);
+        void changeBoxPosition(int potentialRow, int potentialCol);
 
     private:
         void readLevelFromFile();

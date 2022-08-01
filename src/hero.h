@@ -8,6 +8,13 @@
 class Array2D;
 class Level;
 
+
+struct PossiblePush{
+    bool pushingPossible{false};
+    int potentialRow{0};
+    int potentialCol{0};
+};
+
 class Hero{
 
 public:
@@ -19,7 +26,7 @@ public:
     ~Hero() {};
 
     void Update(Array2D& levelData);
-    void changeHeroTexturePosition(int x, int y, std::unique_ptr<Level>& level);
+    PossiblePush changeHeroTexturePosition(int dirRow, int dirCol, std::unique_ptr<Level>& level);
     
     TextureData getTextureData();
     std::pair<int,int> getCurrentHeroCellPosition();
@@ -30,6 +37,8 @@ public:
 private:
 
     int getHeroDataPosition(Array2D& levelData);
+    bool playerBlocked(int row, int col, int dirRow, int dirCol, std::unique_ptr<Level>& level);
+    bool boxMovable(int row, int col,std::unique_ptr<Level>& level);
     
     std::string _name;
     
