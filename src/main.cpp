@@ -6,7 +6,7 @@
 #include <iostream>
 
 // TODO: increase game version
-constexpr std::string_view gameVersion{"v.0.2"};
+constexpr std::string_view gameVersion{"v.0.3"};
 
 
 

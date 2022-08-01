@@ -27,7 +27,7 @@ void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr
       break;
   }
    
-  hero.changeHeroTexturePosition(direction.first,direction.second);
+  hero.changeHeroTexturePosition(direction.first,direction.second,level);
   level->setCurrentDirectionInput(direction);
 
 }
@@ -45,11 +45,9 @@ void Controller::HandleInput(bool &running, Hero &hero, std::unique_ptr<Level>& 
         case SDLK_DOWN:
           SetDirection(hero, Hero::Direction::kDown, level);
           break;
-
         case SDLK_LEFT:
           SetDirection(hero, Hero::Direction::kLeft, level);
           break;
-
         case SDLK_RIGHT:
           SetDirection(hero, Hero::Direction::kRight, level);
           break;
@@ -60,7 +58,7 @@ void Controller::HandleInput(bool &running, Hero &hero, std::unique_ptr<Level>& 
         default:
           std::cout << "key pressed: " << e.key.keysym.sym << std::endl;
       }
-    } else if (e.type == SDL_KEYUP)
+    } else if (e.type == SDL_KEYUP) /// reset at release arrowkeys
       {
         switch (e.key.keysym.sym) {
         case SDLK_UP:

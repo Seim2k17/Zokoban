@@ -1,11 +1,13 @@
 #include "level.h"
 //#include "resource_path.h"
+#include "texture.h"
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <vector>
 #include <string_view>
 #include <SDL.h>
 
@@ -44,6 +46,12 @@ Level::createLevel()
     }
 }
 
+std::vector<LevelBlock>
+Level::getLevelBlocks()
+{
+    return _levelData._blocks;
+}
+
 bool
 Level::levelCreateable()
 {
@@ -68,8 +76,6 @@ Level::Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPos
 void
 Level::readLevelFromFile()
 {
-    // see also render.cpp
-    //const std::string levelPath = getResourcePath("level") + "level_" + std::to_string(_currentLevel);
     const std::string levelPath = std::string(SDL_GetBasePath())+"res/level/" + "level_" + std::to_string(_currentLevel);
 
     std::string line;
@@ -84,14 +90,22 @@ Level::readLevelFromFile()
         while (std::getline(filestream, line)) {
             std::istringstream linestream(line);
             std::cout << line << std::endl;
-            row=0;
+            col=0;
             linestream >> std::noskipws; /// whitspace are not ignored, otherwise the data vector holds wrong level data
             while(linestream >> symbol)
             {
-                _levelData[col][row] = symbol;
-                ++row;
+                _levelData[row][col].characterSymbol = symbol;
+                _levelData[row][col].texture.setDestinationValues(row,col);
+                _levelData[row][col].texture.type = getSymbolType(symbol);
+                // as the player is created separately we set here the correct start position
+                if(_levelData[row][col].texture.type == TextureType::Player)
+                {
+                    playerStartPosition.first = row;
+                    playerStartPosition.second = col;
+                }
+                ++col;
             }
-            ++col;
+            ++row;
         }
     }
     else
@@ -113,7 +127,7 @@ Level::outputLevel()
     {
         for(int i=0;i<=cols+1;++i)
         {
-            printf("%c",_levelData[j][i]);
+            printf("%c",_levelData[j][i].characterSymbol);
         }
         printf("%s","\n");
     }
@@ -124,11 +138,43 @@ Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,i
 {
     // TODO some checks if there are special areas/boxes/walls at the new position then block or st else ....
     // think of if this is now the point to introduce a small state machine ?
-    _levelData[lastPos.first][lastPos.second] = ' ';
-    _levelData[newPos.first][newPos.second] = 'P';
+    char& lastPosiSymbol = _levelData[lastPos.first][lastPos.second].characterSymbol;
+    char& newPosiSymbol = _levelData[newPos.first][newPos.second].characterSymbol;
 
+    if((getSymbolType(newPosiSymbol) != TextureType::Wall) 
+        && (getSymbolType(newPosiSymbol) != TextureType::Box))
+    {
+        lastPosiSymbol = ' ';
+        newPosiSymbol = 'P';
+    }
+    
     outputLevel();
 
+}
+
+std::pair<int,int>&
+Level::getPlayerStartPosition()
+{
+    return playerStartPosition;
+}
+
+TextureType
+Level::getSymbolType(char& symbol)
+{
+    switch(symbol)
+    {
+        case 'P':
+            return TextureType::Player;
+        case '#':
+            return TextureType::Wall;
+        case 'B':
+            return TextureType::Box;
+        case '.':
+            return TextureType::Goal;
+        default:
+            return TextureType::Empty;
+    }
+    return TextureType::Empty;
 }
 
 void

@@ -26,6 +26,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   bool running = true;
 
   CreateLevel(currentLevel);
+  // set initial playerstart
+  hero.setPlayerStartPosition(_level->getPlayerStartPosition());
    
   while (running) {
     frame_start = SDL_GetTicks();
@@ -33,7 +35,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, hero, _level);
     Update();
-    // unique ptrs can't be copied -> we need to move the ownership -> but then dtor will be called / so we pass it by reference tro use the ressource 
+    // unique ptrs can't be copied -> we need to move the ownership -> but then dtor will be called / so we pass it by reference to use the ressource 
     renderer.Render(hero, _level);
 
     frame_end = SDL_GetTicks();
@@ -68,20 +70,7 @@ void Game::CreateLevel(int level) {
 
 void Game::Update() {
   
-  hero.Update(_level.get()->getLevelData());
-  _level.get()->Update(hero.getCurrentHeroCellPosition(), hero.getLastHeroCellPosition());
+  hero.Update(_level->getLevelData());
+  _level->Update(hero.getCurrentHeroCellPosition(), hero.getLastHeroCellPosition());
    
-  /*
-  int new_x = static_cast<int>(snake.head_x);
-  int new_y = static_cast<int>(snake.head_y);
-
-  // Check if there's food over here
-  if (food.x == new_x && food.y == new_y) {
-    score++;
-    CreateLevel();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
-  }
-  */
 }

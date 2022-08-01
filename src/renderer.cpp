@@ -1,14 +1,17 @@
 #include "renderer.h"
-// TODO: check solution
-// error checks but problems with multiple definition when using make
-//#include "resource_path.h"
-
 #include "hero.h"
+
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <memory>
 #include <SDL.h>
+
+constexpr std::string_view texturePathHero{"res/hero/avatar.bmp"};
+constexpr std::string_view texturePathWall{"res/level/wall.bmp"};
+constexpr std::string_view texturePathBox{"res/level/box.bmp"};
+constexpr std::string_view texturePathGoal{"res/level/goal.bmp"};
+
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -80,25 +83,41 @@ void Renderer::RenderTexture(const std::string& texturePath, const SDL_Rect& sou
 }
 
 void Renderer::Render(Hero& hero, std::unique_ptr<Level>& level) {
-  /*
-  SDL_Rect block;
-  block.w = screen_width / grid_width;
-  block.h = screen_height / grid_height;
-  */
-
 
   // Clear screen
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
   SDL_RenderClear(sdl_renderer);
 
-  TextureData heroData = hero.getTextureData();
+  // render level stuff
+  std::vector<LevelBlock> levelData = level->getLevelBlocks();
 
-  // render hero texture
-  RenderTexture(heroData.texturePath, heroData.Source, heroData.Destination);
+  for(auto const &el:levelData)
+  {
+    switch(el.texture.type)
+    {
+      case TextureType::Wall:
+        RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathWall), el.texture.Source, el.texture.Destination);
+        break;
+        
+      case TextureType::Box:
+        RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathBox), el.texture.Source, el.texture.Destination);
+        break;
+      case TextureType::Goal:
+        RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathGoal), el.texture.Source, el.texture.Destination);
+        break;
+      case TextureType::Player:
+      {
+        TextureData heroData = hero.getTextureData();
+        RenderTexture(std::string(SDL_GetBasePath())+std::string(texturePathHero), heroData.Source, heroData.Destination);
+        break;
+      }
+      default:
+        break;
+    }
+  }
   
 	//Update the screen
 	SDL_RenderPresent(sdl_renderer);
-	
 }
 
 
