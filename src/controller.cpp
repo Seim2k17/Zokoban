@@ -28,13 +28,15 @@ void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr
   }
    
   PossiblePush push = hero.changeHeroTexturePosition(direction.first,direction.second,level);
-  
+  level->setPlayerPosition(hero.getCurrentHeroCellPosition(), hero.getLastHeroCellPosition(),direction,push.pushingPossible);
+
   if(push.pushingPossible && level->getLevelData()[push.potentialRow][push.potentialCol].texture.type == TextureType::Box)
   {
-    level->changeBoxPosition(push.potentialRow, push.potentialCol);
+    level->changeBoxPosition(push.potentialRow, push.potentialCol,direction);
   }
   
   level->setCurrentDirectionInput(direction);
+  
 
 }
 

@@ -46,11 +46,11 @@ class Level
         int getCurrentLevel();
         std::pair<int,int>& getPlayerStartPosition();
 
-        void setPlayerPosition(const std::pair<int,int>& curPos, const std::pair<int,int>& newPos);
+        void setPlayerPosition(const std::pair<int,int>& curPos, const std::pair<int,int>& newPos,const std::pair<int,int>& direction, bool pushing);
         void setCurrentDirectionInput(std::pair<int,int> curInput);
 
         void Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition);
-        void changeBoxPosition(int potentialRow, int potentialCol);
+        void changeBoxPosition(int boxRow, int boxCol,std::pair<int,int> direction);
 
     private:
         void readLevelFromFile();

@@ -62,17 +62,83 @@ Level::levelCreateable()
 void
 Level::Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition)
 {
-    //TODO: levelstuff t.b.d.
-    if(currentDirectionInput.first != 0 || currentDirectionInput.second != 0)
-    {
-        /*
-        std::cout << "Hero was at: (" << lastHeroPosition.first << "," << lastHeroPosition.second << ")" << std::endl;
-        std::cout << "Hero is at: (" << newHeroPosition.first << "," << newHeroPosition.second << ")" << std::endl;
-        std::cout << "CurDirInput: (" << currentDirectionInput.first << "," << currentDirectionInput.second << ")" << std::endl;
-        */
-        setPlayerPosition(newHeroPosition,lastHeroPosition);
-    }
+    //t.b.d.
+}
+
+void
+Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,int>& lastPos,const std::pair<int,int>& direction, bool pushing)
+{
+    // TODO : Refactor deluxe !
+    char &lastPosiSymbol = _levelData[lastPos.first][lastPos.second].characterSymbol;
+    char &newPosiSymbol = _levelData[newPos.first][newPos.second].characterSymbol;
     
+
+    TextureType potentialPosiSymbol = getSymbolType(newPosiSymbol);
+
+    switch(potentialPosiSymbol)
+    {
+        case TextureType::Wall:
+            break;
+        case TextureType::Box:
+        {
+            if(pushing)
+            {
+                char &newBoxPosiSymbol = _levelData[newPos.first+direction.first][newPos.second+direction.second].characterSymbol;
+                char &lastBoxPosiSymbol = _levelData[newPos.first][newPos.second].characterSymbol;
+                if(_levelData[lastPos.first][lastPos.second].savedSymbol == '.')
+                {
+                    lastPosiSymbol = '.';
+                    _levelData[lastPos.first][lastPos.second].savedSymbol == ' ';
+                }
+                else
+                {
+                    lastPosiSymbol = ' ';
+                    _levelData[lastPos.first][lastPos.second].texture.type = TextureType::Empty;
+                }
+                
+                lastBoxPosiSymbol = 'P';
+                _levelData[newPos.first][newPos.second].texture.type = TextureType::Player;
+                newBoxPosiSymbol ='B';
+                _levelData[newPos.first+direction.first][newPos.second+direction.second].texture.type = TextureType::Box;
+            }
+            break;
+        }
+        case TextureType::Goal:
+        {
+            _levelData[newPos.first][newPos.second].savedSymbol = '.';
+            if(_levelData[lastPos.first][lastPos.second].savedSymbol == '.')
+            {
+                lastPosiSymbol = '.';
+                _levelData[lastPos.first][lastPos.second].texture.type = TextureType::Goal;
+            }
+            else{
+                lastPosiSymbol = ' ';
+                _levelData[lastPos.first][lastPos.second].texture.type = TextureType::Empty;
+            }
+            
+            newPosiSymbol = 'P';
+            _levelData[newPos.first][newPos.second].texture.type = TextureType::Player;
+            break;
+        }
+        default:
+            {
+                if(_levelData[lastPos.first][lastPos.second].savedSymbol == '.')
+                {
+                    lastPosiSymbol = '.';
+                    _levelData[lastPos.first][lastPos.second].texture.type = TextureType::Goal;
+                    _levelData[lastPos.first][lastPos.second].savedSymbol == ' ';
+                }
+                else
+                {
+                    lastPosiSymbol = ' ';
+                    _levelData[lastPos.first][lastPos.second].texture.type = TextureType::Empty;
+                }
+                newPosiSymbol = 'P';
+                _levelData[newPos.first][newPos.second].texture.type = TextureType::Player;
+                break;
+            }
+    }
+    outputLevel();
 }
 
 void
@@ -124,65 +190,15 @@ Level::outputLevel()
     int rows = _levelData._rows;
     int cols = _levelData._blocks.size() / rows;
     
-    //WHY +1 ???
-    for(int j=0;j<rows;++j)
+    // WHY +1 ???
+    for(int j=0;j<rows+1;++j)
     {
-        for(int i=0;i<cols;++i)
+        for(int i=0;i<cols+1;++i)
         {
             printf("%c",_levelData[j][i].characterSymbol);
         }
         printf("%s","\n");
     }
-}
-
-void
-Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,int>& lastPos)
-{
-    // TODO some checks if there are special areas/boxes/walls at the new position then block or st else ....
-    // think of if this is now the point to introduce a small state machine ?
-    
-    // first check for blockable/pushable content with a safe copy ...
-    char lastPosiSymbol = _levelData[lastPos.first][lastPos.second].characterSymbol;
-    char newPosiSymbol = _levelData[newPos.first][newPos.second].characterSymbol;
-
-    TextureType potentialPosiSymbol = getSymbolType(newPosiSymbol);
-
-    if(potentialPosiSymbol != TextureType::Wall) 
-    {
-        // pushable ?
-        if (potentialPosiSymbol == TextureType::Box)
-        {
-            std::cout << "Try to push" << std::endl;
-         
-        }
-        else{
-            // .. then we can change the position
-            char &lastPosiSymbolRef = _levelData[lastPos.first][lastPos.second].characterSymbol;
-            char &newPosiSymbolRef = _levelData[newPos.first][newPos.second].characterSymbol;
-                    
-            lastPosiSymbolRef = ' ';
-
-            // if player on goalpositiion save the symbol ...
-            if(newPosiSymbolRef == '.')
-            {
-                _levelData[newPos.first][newPos.second].savedSymbol = '.';
-            }
-
-            newPosiSymbolRef = 'P';
-
-            // ... and load the goal symbol
-            if(_levelData[lastPos.first][lastPos.second].savedSymbol == '.')
-            {
-                lastPosiSymbolRef = '.';
-                _levelData[lastPos.first][lastPos.second].savedSymbol == ' ';
-            }
-        }
-
-        
-    }
-    
-    //outputLevel();
-
 }
 
 std::pair<int,int>&
@@ -211,11 +227,9 @@ Level::getSymbolType(char& symbol)
 }
 
 void
-Level::changeBoxPosition(int potentialRow, int potentialCol)
+Level::changeBoxPosition(int boxRow, int boxCol,std::pair<int,int> direction)
 {
-    // TODO: check if this the correct position of the box?
-    // move the potential box
-    std::cout << "push box to " << potentialRow << "," << potentialCol << std::endl;
+    _levelData[boxRow][boxCol].texture.setDestinationValues(boxRow+direction.first,boxCol+direction.second);
 }
 
 void

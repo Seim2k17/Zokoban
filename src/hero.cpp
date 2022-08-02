@@ -94,7 +94,7 @@ Hero::changeHeroTexturePosition(int dirRow, int dirCol, std::unique_ptr<Level>& 
     {
       _textureData.setDestinationValues(potentialY,potentialX);
       // here it means we can make a potential push
-      box = {true,potentialY+dirRow,potentialX+dirCol};
+      box = {true,potentialY,potentialX};
     }
     
     return box;
