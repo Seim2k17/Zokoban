@@ -1,14 +1,25 @@
-# CPPND: Capstone Zokoban
+# Udacity C++ Capstone Project: Zokoban
 
 
-This is the final project (Capstone project) for the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The basis for this repo was used from the CPPND: Capstone Snake Game Example (git@github.com:udacity/CppND-Capstone-Snake-Game.git).
-
-
-WIP
+This is the final project (Capstone project) for the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). This project goes with Capstone option 2 (clone a classic 2D game). The basis for this repo was used from the [CPPND: Capstone Snake Game Example](git@github.com:udacity/CppND-Capstone-Snake-Game.git).
 
 Zokoban is a remake of the european 1984 sokoban game created by Hiroyuki Imabayashi in or until 1982.
+In this 2D-puzzle-game you are a warehouseman and you need to push all boxes to the correct position. You can only walk and push boxes. The warehouseman isn't strong enough to pull the boxes or push more than one box. The goal is to minimize the pushes and steps and to find the best solution possible for each level. In the original there are 50 Levels. 
 
-Nice to read: http://www.games4brains.de/sokoban-geschichte.php
+In this version there will be no more than five levels but you can create your own by just adding new level files in pure ASCII-format inside the folder: /build/res/level/.
+
+## File structure
+
+The source files are in the /src/-folder and the project is divided into several classes. Each class holds a different type of methods and datastructures. The ressource files needed (assets,levelstructure) live inside the /res - folder and should be copied to /build/res after building the project. 
+
+The projects uses cmake and make to make building easier.
+
+## Class structure
+
+## Links: 
+
+[Story behind Sokoban](http://www.games4brains.de/sokoban-geschichte.php)
+[Sokoban levels](http://borgar.net/programs/sokoban/#Sokoban)
 
 Game Requirements
 
