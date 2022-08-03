@@ -21,7 +21,7 @@ struct LevelBlock{
 
 class Array2D {
     
-    //TODO: recheck COLS vs. ROWS !!! -> see readLevelFromFile() ln.80: Array2D(5,7) vs. Array2D(7,5);;
+    //TODO: recheck COLS vs. ROWS !!! -> see readLevelFromFile() Array2D(5,7) vs. Array2D(7,5);;
     public:
         Array2D(){};
         Array2D(int rows, int cols)
@@ -51,6 +51,7 @@ class Level
 
         void Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition);
         void changeBoxPosition(int boxRow, int boxCol,std::pair<int,int> direction);
+        void checkWinCondition(/*bool &condition*/);
 
     private:
         void readLevelFromFile();
@@ -65,4 +66,6 @@ class Level
 
         std::pair<int,int> playerStartPosition;
         std::pair<int,int> currentDirectionInput;
+
+        int _remainingGoalCounter{0};
 };

@@ -25,6 +25,18 @@ Level::~Level()
     std::cout << "Level dtor: Level " << _currentLevel << std::endl;
 }
 
+
+void
+Level::checkWinCondition(/*bool &condition*/)
+{
+    //std::cout << "Check winstate: " << _remainingGoalCounter << " boxes left." << std::endl;
+    if(_remainingGoalCounter == 0)
+    {
+        std::cout << "You won the level!" << std::endl;
+        //condition=true;
+    }
+}
+
 Array2D& 
 Level::getLevelData()
 {
@@ -98,6 +110,10 @@ Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,i
                 
                 lastBoxPosiSymbol = 'P';
                 _levelData[newPos.first][newPos.second].texture.type = TextureType::Player;
+                if(newBoxPosiSymbol == '.')
+                {
+                    --_remainingGoalCounter;
+                }
                 newBoxPosiSymbol ='B';
                 _levelData[newPos.first+direction.first][newPos.second+direction.second].texture.type = TextureType::Box;
             }
@@ -170,6 +186,10 @@ Level::readLevelFromFile()
                 {
                     playerStartPosition.first = row;
                     playerStartPosition.second = col;
+                }
+                if(_levelData[row][col].texture.type == TextureType::Goal)
+                {
+                    ++_remainingGoalCounter;
                 }
                 ++col;
             }

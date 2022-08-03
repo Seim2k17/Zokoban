@@ -14,10 +14,16 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::string name)
   
 }
 
+void
+Game::checkWinCondition()
+{
+  _level->checkWinCondition(/*winCondition*/);
+}
+
 void Game::Run(Controller const &controller, Renderer &renderer,
                std::size_t target_frame_duration) {
   
-  std::cout << "Run started " << std::endl;
+  std::cout << "Game started " << std::endl;
   Uint32 title_timestamp = SDL_GetTicks();
   Uint32 frame_start;
   Uint32 frame_end;
@@ -71,6 +77,10 @@ void Game::CreateLevel(int level) {
 void Game::Update() {
   
   hero.Update(_level->getLevelData());
-  _level->Update(hero.getCurrentHeroCellPosition(), hero.getLastHeroCellPosition());
-   
+  checkWinCondition();
+  if(winCondition)
+  {
+    std::cout << "Congratulation, proceed to next level!" << std::endl;
+  }
+     
 }

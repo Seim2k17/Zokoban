@@ -16,6 +16,7 @@ class Game {
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   
+  void checkWinCondition();
 
  private:
   Hero hero;
@@ -28,9 +29,11 @@ class Game {
 
   int score{0};
   int currentLevel{2};
+  bool winCondition{false};
 
   std::unique_ptr<Level> _level;
 
   void CreateLevel(int level);
   void Update();
+
 };

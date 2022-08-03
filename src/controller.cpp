@@ -33,6 +33,7 @@ void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr
   if(push.pushingPossible && level->getLevelData()[push.potentialRow][push.potentialCol].texture.type == TextureType::Box)
   {
     level->changeBoxPosition(push.potentialRow, push.potentialCol,direction);
+    level->checkWinCondition();
   }
   
   level->setCurrentDirectionInput(direction);
