@@ -28,7 +28,9 @@ class Game {
   std::uniform_int_distribution<int> random_h;
 
   int score{0};
-  int currentLevel{2};
+  // TODO: set startlevel at beginning after a selection
+  // TODO: acc. to the levelfile the size of Array in Level::readLevelFromFile needs o be adjusted as well (WIP)
+  int currentLevel{1};
   bool winCondition{false};
 
   std::unique_ptr<Level> _level;

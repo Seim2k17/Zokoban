@@ -51,7 +51,7 @@ class Level
 
         void Update(std::pair<int,int> newHeroPosition, std::pair<int,int> lastHeroPosition);
         void changeBoxPosition(int boxRow, int boxCol,std::pair<int,int> direction);
-        void checkWinCondition(/*bool &condition*/);
+        void checkWinCondition(bool &condition);
 
     private:
         void readLevelFromFile();

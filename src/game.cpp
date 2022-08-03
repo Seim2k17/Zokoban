@@ -17,7 +17,9 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::string name)
 void
 Game::checkWinCondition()
 {
-  _level->checkWinCondition(/*winCondition*/);
+  _level->checkWinCondition(winCondition);
+
+  // TODO: proceed to next level if won current level 
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -29,17 +31,18 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_end;
   Uint32 frame_duration;
   int frame_count = 0;
-  bool running = true;
+  bool gameRun = true;
 
   CreateLevel(currentLevel);
   // set initial playerstart
   hero.setPlayerStartPosition(_level->getPlayerStartPosition());
    
-  while (running) {
+  while (gameRun) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, hero, _level);
+    controller.HandleInput(gameRun, hero, _level, winCondition);
+          
     Update();
     // unique ptrs can't be copied -> we need to move the ownership -> but then dtor will be called / so we pass it by reference to use the ressource 
     renderer.Render(hero, _level);
@@ -64,9 +67,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
-
-
   }
+  if(winCondition)
+  {
+    std::cout << "Congratulation you won, proceed to next level!" << std::endl;
+  }
+  
 }
 
 void Game::CreateLevel(int level) {
@@ -78,9 +84,6 @@ void Game::Update() {
   
   hero.Update(_level->getLevelData());
   checkWinCondition();
-  if(winCondition)
-  {
-    std::cout << "Congratulation, proceed to next level!" << std::endl;
-  }
+  
      
 }

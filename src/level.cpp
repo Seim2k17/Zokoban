@@ -27,13 +27,13 @@ Level::~Level()
 
 
 void
-Level::checkWinCondition(/*bool &condition*/)
+Level::checkWinCondition(bool &condition)
 {
     //std::cout << "Check winstate: " << _remainingGoalCounter << " boxes left." << std::endl;
     if(_remainingGoalCounter == 0)
     {
         std::cout << "You won the level!" << std::endl;
-        //condition=true;
+        condition=true;
     }
 }
 
@@ -166,8 +166,10 @@ Level::readLevelFromFile()
     char symbol;
     int row=0,col=0;
 
-    // TODO set size acc. to levelfile ! NO MAGIC NUMBERS
-    _levelData = Array2D(7,6);
+    // TODO set size acc. to levelfile ! NO MAGIC NUMBERS, 
+    // before creating the datastructure the size needs to be read from the levelfile-> and set for each level beforehand !
+    _levelData = Array2D(17,5); /// level 1
+    //_levelData = Array2D(7,5); /// level 2
   
     std::ifstream filestream(levelPath);
     if (filestream.is_open()) {

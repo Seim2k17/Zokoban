@@ -6,8 +6,14 @@
 #include "hero.h"
 #include "level.h"
 
-void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr<Level>& level) const {
+void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr<Level>& level, bool& winCondition) const {
   
+  // early return if the level is done, so we can't move the character any more
+  if(winCondition)
+  {
+    return;
+  }
+
   std::pair<int,int> direction;
   switch (input)
   {
@@ -33,7 +39,7 @@ void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr
   if(push.pushingPossible && level->getLevelData()[push.potentialRow][push.potentialCol].texture.type == TextureType::Box)
   {
     level->changeBoxPosition(push.potentialRow, push.potentialCol,direction);
-    level->checkWinCondition();
+    level->checkWinCondition(winCondition);
   }
   
   level->setCurrentDirectionInput(direction);
@@ -41,7 +47,7 @@ void Controller::SetDirection(Hero &hero, Hero::Direction input, std::unique_ptr
 
 }
 
-void Controller::HandleInput(bool &running, Hero &hero, std::unique_ptr<Level>& level) const {
+void Controller::HandleInput(bool &running, Hero &hero, std::unique_ptr<Level>& level, bool& winCondition) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
@@ -49,16 +55,16 @@ void Controller::HandleInput(bool &running, Hero &hero, std::unique_ptr<Level>& 
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          SetDirection(hero, Hero::Direction::kUp, level);
+          SetDirection(hero, Hero::Direction::kUp, level,winCondition);
           break;
         case SDLK_DOWN:
-          SetDirection(hero, Hero::Direction::kDown, level);
+          SetDirection(hero, Hero::Direction::kDown, level,winCondition);
           break;
         case SDLK_LEFT:
-          SetDirection(hero, Hero::Direction::kLeft, level);
+          SetDirection(hero, Hero::Direction::kLeft, level,winCondition);
           break;
         case SDLK_RIGHT:
-          SetDirection(hero, Hero::Direction::kRight, level);
+          SetDirection(hero, Hero::Direction::kRight, level,winCondition);
           break;
         case SDLK_q:
           std::cout << "q pressed" << std::endl;
