@@ -55,9 +55,11 @@ class Level
 
     private:
         void readLevelFromFile();
+        std::pair<int,int> readLevelSizeFromFile();
         void outputLevel();
         void createLevel();
         bool levelCreateable();
+        int getMaxLevelCount(const std::string path);
         TextureType getSymbolType(char& symbol);
 
         int _currentLevel;

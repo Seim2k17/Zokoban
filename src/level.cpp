@@ -7,13 +7,14 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <filesystem>
 #include <vector>
 #include <string_view>
 #include <SDL.h>
 
-//test
 
-constexpr std::string_view levelPath{"/level"};
+constexpr std::string_view levelPath{"res/level/"};
+
 
 Level::Level(int level)
     : _currentLevel(level)
@@ -159,21 +160,66 @@ Level::setPlayerPosition(const std::pair<int,int>& newPos, const std::pair<int,i
     outputLevel();
 }
 
+int
+Level::getMaxLevelCount(const std::string path)
+{
+    auto dirIt = std::filesystem::directory_iterator(path);
+    int count = std::count_if(
+        begin(dirIt),
+        end(dirIt),
+        [](auto& entry){ 
+            auto found = std::string(entry.path()).find("level_");
+            std::cout << std::string(entry.path()) << ": " << found << std::endl;
+            return (entry.is_regular_file() && (found != std::string::npos));
+        }
+    );
+    return count;
+}
+
+std::pair<int,int>
+Level::readLevelSizeFromFile()
+{
+    const std::string fullPath = std::string(SDL_GetBasePath())+ std::string(levelPath) + "level_" +std::to_string(_currentLevel);
+    char character;
+    std::string line;
+    std::pair<int,int> size{0,0};
+    std::ifstream filestream(fullPath);
+
+    std::cout << "Files found: " << getMaxLevelCount(std::string(SDL_GetBasePath())+std::string(levelPath)) << std::endl;
+    if (filestream.is_open()) {
+        while (std::getline(filestream, line)) {
+            if(size.second < line.size())
+            {
+                size.second = line.size();
+            }
+            
+            ++size.first;
+        }
+    }
+    std::cout << "size of file for level " << size.first << ":" << size.second << std::endl;
+    return size;
+}
+
+
 void
 Level::readLevelFromFile()
 {
-    const std::string levelPath = std::string(SDL_GetBasePath())+"res/level/" + "level_" + std::to_string(_currentLevel);
+    const std::string fullPath = std::string(SDL_GetBasePath())+ std::string(levelPath) + "level_"+ std::to_string(_currentLevel);
 
     std::string line;
     char symbol;
     int row=0,col=0;
 
-    // TODO set size acc. to levelfile ! NO MAGIC NUMBERS, 
-    // before creating the datastructure the size needs to be read from the levelfile-> and set for each level beforehand !
-    _levelData = Array2D(17,5); /// level 1
-    //_levelData = Array2D(7,5); /// level 2
+    std::pair<int,int> levelSize = readLevelSizeFromFile();
+    _levelData = Array2D(levelSize.second,levelSize.first);
+    
+    // TODO: check in debugmode if everythinig is filled correctly
+    // -> Texture and Data in the same datastructure !!! at reading the level
+    // -> so that later in best case only a lookup is needed
+
+    
   
-    std::ifstream filestream(levelPath);
+    std::ifstream filestream(fullPath);
     if (filestream.is_open()) {
         while (std::getline(filestream, line)) {
             std::istringstream linestream(line);
@@ -202,7 +248,7 @@ Level::readLevelFromFile()
     }
     else
     {
-        std::cout << "Cannot open file " << levelPath << std::endl;
+        std::cout << "Cannot open file " << fullPath << std::endl;
     }
     std::cout << "Done reading LevelData: ReOutput Level" << std::endl;
     outputLevel();

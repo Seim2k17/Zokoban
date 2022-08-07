@@ -22,6 +22,15 @@ Game::checkWinCondition()
   // TODO: proceed to next level if won current level 
 }
 
+void
+Game::getUserInput()
+{
+  std::cout << "Hi, whats your name" << std::endl;
+  std::cin >> _playerName;
+  std::cout << "What level you want to start" << std::endl;
+  std::cin >> _currentLevel;
+}
+
 void Game::Run(Controller const &controller, Renderer &renderer,
                std::size_t target_frame_duration) {
   
@@ -33,7 +42,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool gameRun = true;
 
-  CreateLevel(currentLevel);
+  getUserInput();
+
+  CreateLevel(_currentLevel);
   // set initial playerstart
   hero.setPlayerStartPosition(_level->getPlayerStartPosition());
    

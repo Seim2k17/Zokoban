@@ -12,8 +12,7 @@ All the used assets were screenshotted from the internet and are used as dummy a
 
 ## Manually actions
 (August 3rd,2022) 
-1. At the moment you only can make use of the first level-file "/res/level_1"). You can edit it but if you change the size of the layout
-you need also to ajdust the array-size manually in Level::readLevelFromFile(). If you want to satrft the game from a different levelfile you need to adjust the variable currentLevel Game.h
+1. At the moment you only can make use of the first level-file "/res/level_1"). If you want to start the game from a different levelfile you need to adjust the variable currentLevel Game.h
 2. before starting you need to copy the whole /res/ - folder to your build folder.
 
 ## Control
