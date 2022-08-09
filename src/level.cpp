@@ -33,7 +33,7 @@ void
 Level::checkWinCondition(bool &condition)
 {
     //std::cout << "Check winstate: " << _remainingGoalCounter << " boxes left." << std::endl;
-    if(_remainingGoalCounter == 0)
+    if(_remainingGoalCounter == 0 && !condition)
     {
         std::cout << "You won the level!" << std::endl;
         condition=true;
