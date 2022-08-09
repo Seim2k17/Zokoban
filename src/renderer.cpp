@@ -6,6 +6,7 @@
 #include <string_view>
 #include <memory>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 constexpr std::string_view texturePathHero{"res/hero/avatar.bmp"};
 constexpr std::string_view texturePathWall{"res/level/wall.bmp"};
@@ -27,6 +28,8 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "SDL could not initialize.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  TTF_Init();
 
   // Create Window
   const char* gameVersion = (std::string("Zokoban ") + std::string(game_version)).c_str();
@@ -50,6 +53,7 @@ Renderer::Renderer(const std::size_t screen_width,
 
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
+  TTF_Quit();
   SDL_Quit();
 }
 
