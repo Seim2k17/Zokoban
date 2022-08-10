@@ -12,8 +12,10 @@ project(SDL2Test)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} src)
+include_directories(${SDL2_TTF_INCLUDE_DIR})
 
-add_executable(Zokoban src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/hero.cpp src/level.cpp src/SDL_ttf.c)
+add_executable(Zokoban src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/hero.cpp src/level.cpp)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
-target_link_libraries(Zokoban ${SDL2_LIBRARIES})
+target_link_libraries(Zokoban ${SDL2_LIBRARIES} ${SDL2_TTF_INCLUDE_DIR})
